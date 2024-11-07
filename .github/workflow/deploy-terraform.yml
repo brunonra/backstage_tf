@@ -1,0 +1,30 @@
+name: 'Deploy GCP Bucket via Terraform'
+on:
+  push:
+    paths:
+      - 'terraform/**'   # Trigger the workflow when changes are pushed to the terraform directory
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Apply Terraform
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
+
+      - name: Post Apply Output
+        run: terraform output
+        working-directory: ./terraform
