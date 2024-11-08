@@ -1,8 +1,10 @@
+# .github/workflows/deploy-terraform.yml
+
 name: 'Deploy GCP Bucket via Terraform'
 on:
   push:
     paths:
-      - 'terraform/**'   # Trigger the workflow when changes are pushed to the terraform directory
+      - 'terraform/**'
 
 jobs:
   terraform:
@@ -17,14 +19,17 @@ jobs:
         with:
           terraform_version: 1.0.0
 
-      - name: Initialize Terraform
+      - name: Authenticate to GCP
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }} # Inject the GCP secret
+        run: |
+          echo "$GOOGLE_CREDENTIALS" > "${HOME}/gcp_keystore.json"
+          gcloud auth activate-service-account --key-file="${HOME}/gcp_keystore.json"
+
+      - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
 
-      - name: Apply Terraform
+      - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: ./terraform
-
-      - name: Post Apply Output
-        run: terraform output
         working-directory: ./terraform
