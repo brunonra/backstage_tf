@@ -1,10 +1,22 @@
-# .github/workflows/deploy-terraform.yml
-
 name: 'Deploy GCP Bucket via Terraform'
 on:
   push:
     paths:
       - 'terraform/**'
+  workflow_dispatch:  # This allows manual triggering of the workflow
+    inputs:
+      bucketName:
+        description: 'Name of the bucket'
+        required: true
+        type: string
+      locationType:
+        description: 'Location Type'
+        required: true
+        type: string
+      storageClass:
+        description: 'Storage Class Type'
+        required: true
+        type: string
 
 jobs:
   terraform:
