@@ -1,9 +1,16 @@
 # main.tf
 
 provider "google" {
-  credentials = file("path/to/your/service-account-key.json") # Update the path to your service account key
-  project     = var.project_id                                 # GCP project ID
-  region      = var.region                                     # Location type parameter
+  credentials = file("${var.gcp_credentials_path}")
+  project     = var.project_id
+  region      = var.region
+}
+
+# Add a variable for the credentials path
+variable "gcp_credentials_path" {
+  description = "Path to the GCP service account key file"
+  type        = string
+  default     = "${path.module}/gcp_keystore.json"  # The path where it is created in the GitHub Action
 }
 
 resource "google_storage_bucket" "bucket" {
